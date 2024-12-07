@@ -18,7 +18,7 @@ mongoose.connect(dbUrl).then((con) => {
 // Schema and Model
 const studetails = new mongoose.Schema({
   username: { type: String, required: true },
-  password: { type: Stringz, required: true },
+  password: { type: String, required: true },
 });
 
 
