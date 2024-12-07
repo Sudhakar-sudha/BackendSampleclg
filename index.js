@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const app = express();
 const port = 3000;
 const mongoose = require('mongoose');
@@ -102,7 +103,9 @@ app.delete('/studentdetails/:id', async (req, res) => {
   }
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+// Start the server only after database connection
+mongoose.connection.once('open', () => {
+  app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+  });
 });
