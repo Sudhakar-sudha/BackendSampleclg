@@ -45,7 +45,7 @@ const studentdetails = mongoose.model('studentdetails', studetails);
 
 
 
-app.post('/save-marks', async (req, res) => {
+app.post('/savemarks', async (req, res) => {
   const marks = req.body;
   try {
     const newMarks = new Marks(marks);
