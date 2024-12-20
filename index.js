@@ -22,7 +22,7 @@ const studetails = new mongoose.Schema({
 });
 
 
-const MarksSchema = new mongoose.Schema({
+const marksSchema = new mongoose.Schema({
   rollNo: String,
   studentName: String,
   internal1: Number,
@@ -36,7 +36,7 @@ const MarksSchema = new mongoose.Schema({
 });
 
 
-const Marks = mongoose.model('Marks', MarksSchema);
+const Marks = mongoose.model('Marks', marksSchema);
 
 
 //Two tables are created
