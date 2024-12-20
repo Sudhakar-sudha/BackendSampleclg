@@ -22,8 +22,39 @@ const studetails = new mongoose.Schema({
 });
 
 
+const MarksSchema = new mongoose.Schema({
+  rollNo: String,
+  studentName: String,
+  internal1: Number,
+  quiz1: Number,
+  assignment1: Number,
+  internal2: Number,
+  quiz2: Number,
+  assignment2: Number,
+  model: Number,
+  quiz3: Number,
+});
+
+
+const Marks = mongoose.model('Marks', MarksSchema);
+
+
 //Two tables are created
 const studentdetails = mongoose.model('studentdetails', studetails);
+
+
+
+
+app.post('/save-marks', async (req, res) => {
+  const marks = req.body;
+  try {
+    const newMarks = new Marks(marks);
+    await newMarks.save();
+    res.status(200).json({ message: 'Marks saved successfully!' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error saving marks', error });
+  }
+});
 
 
 //the admin has added a employee 
