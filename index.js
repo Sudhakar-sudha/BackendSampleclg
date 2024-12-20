@@ -3,9 +3,13 @@ const app = express();
 const port = 3000;
 const mongoose = require('mongoose');
 const cors = require('cors');
+
+const bodyParser = require('body-parser');
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+app.use(bodyParser.json());
 // Connect to MongoDB Atlas
 const dbUrl="mongodb+srv://sudhakar:sudhakar@cluster0.odnra1b.mongodb.net/clg?retryWrites=true&w=majority&appName=Cluster0"
 mongoose.connect(dbUrl).then((con) => {
@@ -48,6 +52,7 @@ const studentdetails = mongoose.model('studentdetails', studetails);
 app.post('/savemarks', async (req, res) => {
   const marks = req.body;
   try {
+    console.log(marks)
     const newMarks = new Marks(marks);
     await newMarks.save();
     res.status(200).json({ message: 'Marks saved successfully!' });
