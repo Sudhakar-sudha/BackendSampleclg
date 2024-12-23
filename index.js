@@ -39,7 +39,13 @@ const marksSchema = new mongoose.Schema({
   quiz3: Number,
 });
 
+const extmarksSchema=new mongoose.Schema({
+  rollNo:String,
+  studentName:String,
+  externalMark:Number,
+});
 
+const ExtMarks =mongoose.model('External',extmarksSchema)
 const Marks = mongoose.model('Marks', marksSchema);
 
 
@@ -60,6 +66,44 @@ app.post('/savemarks', async (req, res) => {
     res.status(500).json({ message: 'Error saving marks', error });
   }
 });
+
+
+
+
+
+// Routes
+app.post('/addExternalMarks', async (req, res) => {
+  const { rollNo, studentName, externalMark } = req.body;
+
+  if (!rollNo || !studentName || externalMark === undefined) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  if (externalMark < 0 || externalMark > 60) {
+    return res.status(400).json({ error: 'Marks must be between 0 and 60' });
+  }
+
+  try {
+    const newMarks = new ExtMarks({ rollNo, studentName, marks });
+    await newMarks.save();
+    res.status(201).json({ message: 'Marks saved successfully' });
+  } catch (error) {
+    console.error('Error saving marks:', error);
+    res.status(500).json({ error: 'Failed to save marks' });
+  }
+});
+
+app.get('/externalMarks', async (req, res) => {
+  try {
+    const marks = await ExtMarks.find();
+    res.status(200).json(marks);
+  } catch (error) {
+    console.error('Error fetching marks:', error);
+    res.status(500).json({ error: 'Failed to fetch marks' });
+  }
+});
+
+
 
 
 //the admin has added a employee 
