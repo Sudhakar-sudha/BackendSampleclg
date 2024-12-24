@@ -93,7 +93,7 @@ app.post('/addExternalMarks', async (req, res) => {
   }
 });
 
-app.get('/externalMarks', async (req, res) => {
+app.get('/addExternalMarks', async (req, res) => {
   try {
     const marks = await ExtMarks.find();
     res.status(200).json(marks);
