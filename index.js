@@ -273,18 +273,6 @@ app.post('/savemarks', async (req, res) => {
 
 
 
-// app.get('/savemarks', async (req, res) => {
-//   try {
-//     const marks = await IntMarks.find(); // Fetch all marks from the database
-//     res.status(200).json(marks); // Send back the marks in JSON format
-//   } catch (error) {
-//     console.error('Error fetching internal marks:', error);
-//     res.status(500).json({ message: 'Error fetching internal marks' });
-//   }
-// });
-
-
-
 app.get('/savemarks', async (req, res) => {
   try {
     const students = await IntMarks.find(); // Fetch all marks from the database
