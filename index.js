@@ -1,208 +1,3 @@
-// const express = require('express');
-// const app = express();
-// const port = 3000;
-// const mongoose = require('mongoose');
-// const cors = require('cors');
-
-// const bodyParser = require('body-parser');
-// // Middleware
-// app.use(cors());
-// app.use(express.json());
-
-// app.use(bodyParser.json());
-// // Connect to MongoDB Atlas
-// const dbUrl="mongodb+srv://sudhakar:sudhakar@cluster0.odnra1b.mongodb.net/clg?retryWrites=true&w=majority&appName=Cluster0"
-// mongoose.connect(dbUrl).then((con) => {
-//   console.log('MongoDB connected to host ' + con.connection.host);
-// }).catch((err) => {
-//   console.error('Database connection error:', err);
-//   process.exit(1); // Exit process with failure
-// });
-
-// // Schema and Model
-// const studetails = new mongoose.Schema({
-//   username: { type: String, required: true },
-//   password: { type: String, required: true },
-// });
-
-
-// const marksSchema = new mongoose.Schema({
-//   rollNo: String,
-//   studentName: String,
-//   internal1: Number,
-//   quiz1: Number,
-//   assignment1: Number,
-//   internal2: Number,
-//   quiz2: Number,
-//   assignment2: Number,
-//   model: Number,
-//   quiz3: Number,
-// });
-
-// const extMarksSchema = new mongoose.Schema({
-//   rollNo: { type: String, required: true },
-//   studentName: { type: String, required: true },
-//   externalMarks: { type: Number, required: true, min: 0, max: 60 },
-// });
-
-
-// const ExtMarks = mongoose.model('ExtMarks', extMarksSchema);
-// const Marks = mongoose.model('Marks', marksSchema);
-
-
-// //Two tables are created
-// const studentdetails = mongoose.model('studentdetails', studetails);
-
-
-
-
-// app.post('/savemarks', async (req, res) => {
-//   const marks = req.body;
-//   try {
-//     console.log(marks)
-//     const newMarks = new Marks(marks);
-//     await newMarks.save();
-//     res.status(200).json({ message: 'Marks saved successfully!' });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error saving marks', error });
-//   }
-// });
-
-
-
-
-// app.post('/addExternalMark', async (req, res) => {
-//   const { rollNo, studentName, externalMarks } = req.body; // Updated to use `externalMarks`
-
-//   // Validate required fields
-//   if (!rollNo || !studentName || externalMarks === undefined) {
-//     return res.status(400).json({ error: 'All fields are required' });
-//   }
-
-//   // Validate marks range
-//   if (externalMarks < 0 || externalMarks > 60) {
-//     return res.status(400).json({ error: 'Marks must be between 0 and 60' });
-//   }
-
-//   try {
-//     // Corrected object to include proper field names
-//     const newMarks = new ExtMarks({ 
-//       rollNo, 
-//       studentName, 
-//       externalMarks // Use the correct field name
-//     });
-
-//     // Save to the database
-//     await newMarks.save();
-
-//     // Send success response
-//     res.status(201).json({ message: 'Marks saved successfully', newMarks });
-//   } catch (error) {
-//     console.error('Error saving marks:', error);
-
-//     // Send error response
-//     res.status(500).json({ error: 'Failed to save marks' });
-//   }
-// });
-
-// app.get('/addExternalMark', async (req, res) => {
-//   try {
-//     const marks = await ExtMarks.find();
-//     res.status(200).json(marks);
-//   } catch (error) {
-//     console.error('Error fetching marks:', error);
-//     res.status(500).json({ error: 'Failed to fetch marks' });
-//   }
-// });
-
-
-
-
-// //the admin has added a employee 
-// app.post('/studentdetails', async (req, res) => {
-//   const { username, password } = req.body;
-//   if (!username || !password) {
-//     return res.status(400).send('Username and password are required');
-//   }
-//   try {
-//     // Check if the user already exists
-//     const existingUser = await studentdetails.findOne({ username });
-//     if (existingUser) {
-//       return res.status(409).send('User already exists');
-//     }
-//     // Create a new user if not exists
-//     const newUser = new studentdetails({ username, password });
-//     await newUser.save();
-//     res.status(201).send('User added successfully');
-//   } catch (error) {
-//     console.error('Error adding user:', error);
-//     res.status(500).send('Error adding user');
-//   }
-// });
-
-
-
-
-// app.get('/studentdetails', async (req, res) => {
-//   try {
-//       const users = await studentdetails.find();
-//       res.json(users);
-//       console.log(users);
-//   } catch (err) {
-//       console.error(err);
-//       res.status(500).send('Server Error');
-//   }
-// });
-
-
-
-
-
-
-// //Edit the employee Details
-// //update employee 
-
-// app.put('/studentdetails/:id', async (req, res) => { 
-//   try {
-//       const {username , password }= req.body;
-//       const id=req.params.id;
-//       const updateDetails = await studentdetails.findByIdAndUpdate(
-//         id,
-//         {username,password}
-//       )      
-//       if (!updateDetails){
-//         return res.status(404).json({message:"Details not found"})
-//       }
-//       res.json(updateDetails)
-     
-//   } catch (err) {
-//       console.error(err);
-//       res.status(500).send('Server Error');
-//   }
-// });
-
-// //the admin only delete the  employee login details so the employee cannot be login
-
-// app.delete('/studentdetails/:id', async (req, res) => { 
-//   try {
-//       const id=req.params.id;
-//       await studentdetails.findByIdAndDelete(id);
-//       res.status(204).end();
-//   } catch (err) {
-//       console.error(err);
-//       res.status(500).send('Server Error');
-//   }
-// });
-
-// // Start the server
-// app.listen(port, () => {
-//   console.log(`Server is running on http://localhost:${port}`);
-// });
-
-
-
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -210,10 +5,17 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 
+
+
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
+
+
+
+
 
 // Connect to MongoDB Atlas
 const dbUrl = "mongodb+srv://sudhakar:sudhakar@cluster0.odnra1b.mongodb.net/clg?retryWrites=true&w=majority&appName=Cluster0";
@@ -226,28 +28,46 @@ mongoose.connect(dbUrl)
     process.exit(1); // Exit process with failure
   });
 
+
+
+
+
+
+  // Subject Schema and Model
+const subjectSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  code: { type: String, required: true, unique: true },
+});
+
+
 // Schema and Models
 const studetails = new mongoose.Schema({
   username: { type: String, required: true },
   password: { type: String, required: true },
 });
 
+
 const marksSchema = new mongoose.Schema({
-  rollNo: String,
-  studentName: String,
-  internal1: Number,
-  quiz1: Number,
-  assignment1: Number,
-  internal2: Number,
-  quiz2: Number,
-  assignment2: Number,
-  model: Number,
-  quiz3: Number,
-});
+  rollNo: { type: String, required: true, trim: true },
+  studentName: { type: String, required: true, trim: true },
+  name: { type: String, required: true, trim: true }, // Subject name
+  code: { type: String, required: true, unique: true, trim: true }, // Subject code
+  internal1: { type: Number, min: 0, max: 25, required: true },
+  quiz1: { type: Number, min: 0, max: 10, required: true },
+  assignment1: { type: Number, min: 0, max: 10, required: true },
+  internal2: { type: Number, min: 0, max: 25, required: true },
+  quiz2: { type: Number, min: 0, max: 10, required: true },
+  assignment2: { type: Number, min: 0, max: 10, required: true },
+  model: { type: Number, min: 0, max: 60, required: true },
+  quiz3: { type: Number, min: 0, max: 10, required: true },
+}, { timestamps: true }); // Automatically adds createdAt and updatedAt fields
+
 
 const extMarksSchema = new mongoose.Schema({
   rollNo: { type: String, required: true },
   studentName: { type: String, required: true },
+  name: { type: String, required: true, trim: true }, // Subject name
+  code: { type: String, required: true, unique: true, trim: true }, // Subject code
   externalMarks: { type: Number, required: true, min: 0, max: 60 },
 });
 
@@ -255,8 +75,106 @@ const extMarksSchema = new mongoose.Schema({
 const ExtMarks = mongoose.model('ExtMarks', extMarksSchema);
 const IntMarks = mongoose.model('IntMarks', marksSchema);
 const studentdetails = mongoose.model('studentdetails', studetails);
+const Subject = mongoose.model("Subject", subjectSchema);
+// Routes
+
+
+
+
+
+
 
 // Routes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Subject Details
+
+// Get all subjects
+app.get("/subjectdetails", async (req, res) => {
+  try {
+    const subjects = await Subject.find();
+    res.json(subjects);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch subjects" });
+  }
+});
+
+// Add a new subject
+app.post("/subjectdetails", async (req, res) => {
+  try {
+    const { name, code } = req.body;
+    const newSubject = new Subject({ name, code });
+    await newSubject.save();
+    res.status(201).json(newSubject);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to add subject", error });
+  }
+});
+
+// Update a subject
+app.put("/subjectdetails/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, code } = req.body;
+    const updatedSubject = await Subject.findByIdAndUpdate(
+      id,
+      { name, code },
+      { new: true, runValidators: true }
+    );
+    if (!updatedSubject) {
+      return res.status(404).json({ message: "Subject not found" });
+    }
+    res.json(updatedSubject);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update subject", error });
+  }
+});
+
+// Delete a subject
+app.delete("/subjectdetails/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedSubject = await Subject.findByIdAndDelete(id);
+    if (!deletedSubject) {
+      return res.status(404).json({ message: "Subject not found" });
+    }
+    res.json({ message: "Subject deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete subject", error });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Internal Marks
 
 // Save internal marks
 app.post('/savemarks', async (req, res) => {
@@ -332,36 +250,46 @@ app.get('/savemarks', async (req, res) => {
 
 
 
-// Save external marks
-app.post('/addExternalMark', async (req, res) => {
-  const { rollNo, studentName, externalMarks } = req.body;
 
-  // Validate required fields
-  if (!rollNo || !studentName || externalMarks === undefined) {
+
+
+
+
+
+
+
+
+
+
+
+//External Marks
+
+
+app.post('/addExternalMark', async (req, res) => {
+  console.log('Incoming Data:', req.body); // Log the request body
+
+  const { rollNo, studentName, name, code, externalMarks } = req.body;
+
+  if (!rollNo || !studentName || !name || !code || externalMarks === undefined) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  // Validate marks range
-  if (externalMarks < 0 || externalMarks > 60) {
-    return res.status(400).json({ error: 'Marks must be between 0 and 60' });
-  }
-
   try {
-    const newMarks = new ExtMarks({ 
-      rollNo, 
-      studentName, 
-      externalMarks
+    const newMark = new ExtMarks({
+      rollNo,
+      studentName,
+      name,
+      code,
+      externalMarks,
     });
-
-    // Save to the database
-    await newMarks.save();
-
-    res.status(201).json({ message: 'Marks saved successfully', newMarks });
-  } catch (error) {
-    console.error('Error saving marks:', error);
+    await newMark.save();
+    res.status(200).json({ message: 'Marks saved successfully!' });
+  } catch (err) {
+    console.error('Error saving marks:', err);
     res.status(500).json({ error: 'Failed to save marks' });
   }
 });
+
 
 // Get external marks for all students
 app.get('/addExternalMark', async (req, res) => {
@@ -374,26 +302,57 @@ app.get('/addExternalMark', async (req, res) => {
   }
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Student Details
+
 // Add student details
 app.post('/studentdetails', async (req, res) => {
   const { username, password } = req.body;
+
   if (!username || !password) {
-    return res.status(400).send('Username and password are required');
+    return res.status(400).json({ message: 'Username and password are required' });
   }
+
   try {
     const existingUser = await studentdetails.findOne({ username });
     if (existingUser) {
-      return res.status(409).send('User already exists');
+      return res.status(409).json({ message: 'User already exists' });
     }
 
     const newUser = new studentdetails({ username, password });
     await newUser.save();
-    res.status(201).send('User added successfully');
+
+    // Send a JSON response
+    res.status(201).json({
+      message: 'User added successfully',
+      user: newUser,
+    });
   } catch (error) {
     console.error('Error adding user:', error);
-    res.status(500).send('Error adding user');
+    res.status(500).json({ message: 'Error adding user', error });
   }
 });
+
 
 // Get all student details
 app.get('/studentdetails', async (req, res) => {
@@ -439,6 +398,125 @@ app.delete('/studentdetails/:id', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Aggregation route
+app.get('/api/student-marks', async (req, res) => {
+  try {
+    const collection = mongoose.connection.collection('intmarks'); // Starting from intmarks
+
+    const result = await collection.aggregate([
+      // Join with studentdetails
+      {
+        $lookup: {
+          from: 'studentdetails', // The collection name to join with
+          localField: 'studentId', // The field in `intmarks`
+          foreignField: '_id', // The field in `studentdetails`
+          as: 'studentInfo', // Alias for the joined data
+        },
+      },
+      {
+        $unwind: '$studentInfo', // Flatten the array
+      },
+      // Join with subjectdetails
+      {
+        $lookup: {
+          from: 'subjectdetails', // The collection name to join with
+          localField: 'subjectId', // The field in `intmarks`
+          foreignField: '_id', // The field in `subjectdetails`
+          as: 'subjectInfo', // Alias for the joined data
+        },
+      },
+      {
+        $unwind: '$subjectInfo', // Flatten the array
+      },
+      // Join with extmarks
+      {
+        $lookup: {
+          from: 'extmarks', // The collection name to join with
+          localField: 'studentId', // The field in `intmarks`
+          foreignField: 'studentId', // The field in `extmarks`
+          as: 'externalMarks', // Alias for the joined data
+        },
+      },
+      // Project fields to format the output
+      {
+        $project: {
+          _id: 0,
+          studentName: '$studentInfo.name',
+          subjectName: '$subjectInfo.subjectName',
+          internalMarks: '$marks', // Internal marks from intmarks
+          externalMarks: { $arrayElemAt: ['$externalMarks.marks', 0] }, // Assuming one external mark per student/subject
+        },
+      },
+    ]).toArray();
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Start the server
 app.listen(port, () => {
