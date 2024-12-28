@@ -251,7 +251,14 @@ app.get('/savemarks', async (req, res) => {
 
 
 
-
+app.get('/getinternalmarks', async (req, res) => {
+  try {
+    const marks = await IntMarks.find();
+    res.json(marks);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching marks', error });
+  }
+});
 
 
 
