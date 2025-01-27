@@ -4,7 +4,7 @@
   "description": "for sample usage",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "sudhakar",
@@ -13,6 +13,7 @@
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "express": "^4.21.1",
-    "mongoose": "^8.8.4"
+    "mongoose": "^8.8.4",
+    "nodemon": "^3.1.9"
   }
 }
