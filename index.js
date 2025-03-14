@@ -309,34 +309,6 @@ app.delete("/api/students/:id", async (req, res) => {
 });
 
 
-app.get("/api/result", async (req, res) => {
-  try {
-    const { username } = req.query;
-
-    if (!username) {
-      return res.status(400).json({ message: "Username is required" });
-    }
-
-    const userResponses = await UserResponse.find({ username });
-
-    if (!userResponses.length) {
-      return res.status(404).json({ message: "No quiz data found for this user." });
-    }
-
-    const correctAnswers = userResponses.filter((resp) => resp.isCorrect).length;
-    const totalQuestions = userResponses.length;
-    const incorrectAnswers = totalQuestions - correctAnswers;
-    const score = correctAnswers; // Adjust scoring as needed
-
-    res.json({ username, score, correctAnswers, incorrectAnswers, totalQuestions });
-  } catch (error) {
-    console.error("Error fetching result:", error);
-    res.status(500).json({ message: "Error fetching quiz results" });
-  }
-});
-
-
-
 // Start Server
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
