@@ -91,6 +91,7 @@ const UserResponseSchema = new mongoose.Schema({
 });
 
 const UserResponse = mongoose.model("UserResponse", UserResponseSchema);
+
 app.post("/api/submit", async (req, res) => {
   try {
     console.log("Request Body:", req.body); // Debugging log
@@ -132,6 +133,26 @@ app.post("/api/submit", async (req, res) => {
 });
 
 
+app.get("/api/check-submission", async (req, res) => {
+  try {
+    const { username } = req.query;
+
+    if (!username) {
+      return res.status(400).json({ error: "Username is required" });
+    }
+
+    const existingSubmission = await UserResponse.findOne({ username });
+
+    if (existingSubmission) {
+      return res.json({ alreadySubmitted: true });
+    } else {
+      return res.json({ alreadySubmitted: false });
+    }
+  } catch (error) {
+    console.error("Error checking submission:", error);
+    res.status(500).json({ error: "Error checking submission status" });
+  }
+});
 
  
 
@@ -172,61 +193,6 @@ app.post("/api/set-answers", async (req, res) => {
 });
 
 
-// // 🟢 **User Result Schema**
-// const UserResultSchema = new mongoose.Schema({
-//   username: { type: String, required: true },
-//   totalScore: { type: Number, required: true },
-//   totalQuestions: { type: Number, required: true },
-//   submittedAt: { type: Date, default: Date.now },
-// });
-
-// const UserResult = mongoose.model("UserResult", UserResultSchema);
-
-// // 🔹 **API: Evaluate User Quiz Score and Store Result**
-// app.get("/api/evaluate/:username", async (req, res) => {
-//   try {
-//     const { username } = req.params;
-
-//     // Fetch user responses and correct answers
-//     const userResponses = await UserResponse.find({ username });
-//     const correctAnswers = await CorrectAnswer.find();
-
-//     if (userResponses.length === 0) {
-//       return res.status(404).json({ error: "No responses found for this user." });
-//     }
-
-//     let correctCount = 0;
-//     let totalQuestions = correctAnswers.length;
-
-//     userResponses.forEach((response) => {
-//       const correctAnswer = correctAnswers.find(
-//         (ans) => parseInt(ans.questionId) === parseInt(response.questionId)
-//       );
-
-//       if (correctAnswer && correctAnswer.correctOption === response.selectedOption) {
-//         correctCount++;
-//       }
-//     });
-
-//     // 🛠️ **Save User Result in MongoDB**
-//     const userResult = await UserResult.findOneAndUpdate(
-//       { username }, // Find user result by username
-//       { totalScore: correctCount, totalQuestions, submittedAt: new Date() }, // Update fields
-//       { upsert: true, new: true } // Create if not exists
-//     );
-
-//     res.json({
-//       username,
-//       totalQuestions,
-//       correctAnswers: correctCount,
-//       score: `${correctCount} / ${totalQuestions}`,
-//       result: userResult, // Return stored result
-//     });
-//   } catch (error) {
-//     console.error("❌ Error evaluating result:", error);
-//     res.status(500).json({ error: "Error evaluating result" });
-//   }
-// });
 
 
 // User Result Schema
@@ -339,6 +305,33 @@ app.delete("/api/students/:id", async (req, res) => {
   } catch (error) {
     console.error("Error deleting student data:", error);
     res.status(500).json({ error: "Error deleting student data" });
+  }
+});
+
+
+app.get("/api/result", async (req, res) => {
+  try {
+    const { username } = req.query;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const userResponses = await UserResponse.find({ username });
+
+    if (!userResponses.length) {
+      return res.status(404).json({ message: "No quiz data found for this user." });
+    }
+
+    const correctAnswers = userResponses.filter((resp) => resp.isCorrect).length;
+    const totalQuestions = userResponses.length;
+    const incorrectAnswers = totalQuestions - correctAnswers;
+    const score = correctAnswers; // Adjust scoring as needed
+
+    res.json({ username, score, correctAnswers, incorrectAnswers, totalQuestions });
+  } catch (error) {
+    console.error("Error fetching result:", error);
+    res.status(500).json({ message: "Error fetching quiz results" });
   }
 });
 
