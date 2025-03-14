@@ -308,6 +308,14 @@ app.delete("/api/students/:id", async (req, res) => {
   }
 });
 
+app.get("/api/evaluated-users", async (req, res) => {
+  try {
+    const evaluatedUsers = await Result.find({}, "username"); // Fetch evaluated usernames
+    res.json(evaluatedUsers);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch evaluated users" });
+  }
+});
 
 // Start Server
 const PORT = 3000;
