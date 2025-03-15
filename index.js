@@ -28,7 +28,11 @@ const User = mongoose.model("Userquiz", userSchema);
 // Register Route
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
-  
+      // Check if user already exists
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ message: "Username is already registered" });
+      }
   const newUser = new User({ username, password });
   await newUser.save();
 
@@ -308,14 +312,60 @@ app.delete("/api/students/:id", async (req, res) => {
   }
 });
 
-app.get("/api/evaluated-users", async (req, res) => {
+
+app.get("/api/result", async (req, res) => {
   try {
-    const evaluatedUsers = await Result.find({}, "username"); // Fetch evaluated usernames
-    res.json(evaluatedUsers);
+    const { username } = req.query;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const userResponses = await UserResponse.find({ username });
+
+    if (!userResponses.length) {
+      return res.status(404).json({ message: "No quiz data found for this user." });
+    }
+
+    const correctAnswers = userResponses.filter((resp) => resp.isCorrect).length;
+    const totalQuestions = userResponses.length;
+    const incorrectAnswers = totalQuestions - correctAnswers;
+    const score = correctAnswers; // Adjust scoring as needed
+
+    res.json({ username, score, correctAnswers, incorrectAnswers, totalQuestions });
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch evaluated users" });
+    console.error("Error fetching result:", error);
+    res.status(500).json({ message: "Error fetching quiz results" });
   }
 });
+
+
+
+// Route to get total registered user count
+app.get("/user-count", async (req, res) => {
+  try {
+    const userCount = await User.countDocuments();
+    res.json({ totalUsers: userCount });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
+// API to get the count of users who submitted responses
+app.get("/api/quiz-submissions/count", async (req, res) => {
+  try {
+    const userCount = await UserResponse.distinct("username").countDocuments();
+     // Divide by 100 and round to 2 decimal places
+     const scaledCount = (userCount / 100);
+
+     res.json({ totalUsersCompleted: scaledCount });
+  } catch (error) {
+    console.error("Error fetching submission count:", error);
+    res.status(500).json({ error: "Error fetching submission count" });
+  }
+});
+
+
 
 // Start Server
 const PORT = 3000;
