@@ -25,6 +25,43 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("Userquiz", userSchema);
 
 
+
+
+// User Result Schema
+const UserResultSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  totalScore: { type: Number, required: true },
+  totalQuestions: { type: Number, required: true },
+  correctAnswers: { type: Number, required: true },
+  wrongAnswers: { type: Number, required: true },
+  unanswered: { type: Number, required: true },
+  submittedAt: { type: Date, default: Date.now },
+});
+
+const UserResult = mongoose.model("UserResult", UserResultSchema);
+
+
+
+// // Schema for storing user responses
+const UserResponseSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  questionId: { type: Number, required: true },
+  selectedOption: { type: String, required: false ,  default: null },
+});
+
+const UserResponse = mongoose.model("UserResponse", UserResponseSchema);
+
+
+
+
+const CorrectAnswerSchema = new mongoose.Schema({
+  questionId: { type: Number, required: true, unique: true },
+  correctOption: { type: String, required: true },
+});
+
+const CorrectAnswer = mongoose.model("CorrectAnswer", CorrectAnswerSchema);
+
+
 // Register Route
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
@@ -80,21 +117,36 @@ app.put("/users/:id", async (req, res) => {
 });
 
 // Delete User (Admin)
+// Delete User (Admin)
 app.delete("/users/:id", async (req, res) => {
-  await User.findByIdAndDelete(req.params.id);
-  res.json({ message: "User deleted successfully" });
+  try {
+    const { id } = req.params;
+    console.log("Received request to delete user with ID:", id);
+
+    const user = await User.findById(id);
+    if (!user) {
+      console.log("User not found in database");
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    console.log("Deleting user:", user);
+    await User.findByIdAndDelete(id);
+    await UserResult.findByIdAndDelete(id);
+    await UserResponse.deleteMany({ username: user.username });
+
+    console.log("User and related data deleted successfully");
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "Error deleting user" });
+  }
 });
 
 
 
-// // Schema for storing user responses
-const UserResponseSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  questionId: { type: Number, required: true },
-  selectedOption: { type: String, required: false ,  default: null },
-});
 
-const UserResponse = mongoose.model("UserResponse", UserResponseSchema);
+
+
 
 app.post("/api/submit", async (req, res) => {
   try {
@@ -160,15 +212,6 @@ app.get("/api/check-submission", async (req, res) => {
 
  
 
-const CorrectAnswerSchema = new mongoose.Schema({
-  questionId: { type: Number, required: true, unique: true },
-  correctOption: { type: String, required: true },
-});
-
-const CorrectAnswer = mongoose.model("CorrectAnswer", CorrectAnswerSchema);
-
-
-
 // API to store correct answers
 app.post("/api/set-answers", async (req, res) => {
   try {
@@ -198,19 +241,6 @@ app.post("/api/set-answers", async (req, res) => {
 
 
 
-
-// User Result Schema
-const UserResultSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  totalScore: { type: Number, required: true },
-  totalQuestions: { type: Number, required: true },
-  correctAnswers: { type: Number, required: true },
-  wrongAnswers: { type: Number, required: true },
-  unanswered: { type: Number, required: true },
-  submittedAt: { type: Date, default: Date.now },
-});
-
-const UserResult = mongoose.model("UserResult", UserResultSchema);
 
 // API: Evaluate User Quiz Score and Store Result with Negative Marking
 app.get("/api/evaluate/:username", async (req, res) => {
