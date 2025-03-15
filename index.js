@@ -117,25 +117,31 @@ app.put("/users/:id", async (req, res) => {
 });
 
 // Delete User (Admin)
-// Delete User (Admin)
 app.delete("/users/:id", async (req, res) => {
   try {
     const { id } = req.params;
     console.log("Received request to delete user with ID:", id);
 
+    // Find user and get their username
     const user = await User.findById(id);
     if (!user) {
       console.log("User not found in database");
       return res.status(404).json({ error: "User not found" });
     }
 
+    const username = user.username; // Fetch username before deleting
     console.log("Deleting user:", user);
+
+    // Delete user from User collection
     await User.findByIdAndDelete(id);
-    await UserResult.findByIdAndDelete(id);
-    await UserResponse.deleteMany({ username: user.username });
+
+    // Delete related data using username
+    await UserResult.deleteOne({ username });
+    await UserResponse.deleteMany({ username });
 
     console.log("User and related data deleted successfully");
     res.json({ message: "User deleted successfully" });
+
   } catch (error) {
     console.error("Error deleting user:", error);
     res.status(500).json({ error: "Error deleting user" });
