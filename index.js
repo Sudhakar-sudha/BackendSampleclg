@@ -62,6 +62,19 @@ const CorrectAnswerSchema = new mongoose.Schema({
 const CorrectAnswer = mongoose.model("CorrectAnswer", CorrectAnswerSchema);
 
 
+
+// Define Feedback Schema
+const feedbackSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  feedback: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const Feedback = mongoose.model("Feedback", feedbackSchema);
+
+
+
+
 // Register Route
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
@@ -402,6 +415,31 @@ app.get("/api/quiz-submissions/count", async (req, res) => {
 });
 
 
+// API Endpoint to handle feedback submission
+app.post("/api/feedback", async (req, res) => {
+  try {
+    const { username, feedback } = req.body;
+    if (!username || !feedback) {
+      return res.status(400).json({ error: "Username and feedback are required" });
+    }
+
+    const newFeedback = new Feedback({ username, feedback });
+    await newFeedback.save();
+    res.json({ message: "Feedback saved successfully!" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// API Endpoint to fetch all feedback
+app.get("/api/feedback", async (req, res) => {
+  try {
+    const feedbacks = await Feedback.find().sort({ createdAt: -1 }); // Latest first
+    res.json(feedbacks);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to retrieve feedback" });
+  }
+});
 
 // Start Server
 const PORT = 3000;
