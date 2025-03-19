@@ -441,6 +441,54 @@ app.get("/api/feedback", async (req, res) => {
   }
 });
 
+
+
+app.get("/api/quiz-submissions", async (req, res) => {
+  try {
+    const responses = await UserResponse.find(); // Fetch all quiz responses
+    res.json({ success: true, data: responses });
+  } catch (error) {
+    console.error("Error fetching quiz responses:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
+
+
+
+
+app.delete("/api/quiz-submissions/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedResponse = await UserResponse.findByIdAndDelete(id);
+
+    if (!deletedResponse) {
+      return res.status(404).json({ success: false, error: "Response not found" });
+    }
+
+    res.json({ success: true, message: "Response deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting response:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
+
+
+app.delete("/api/quiz-submissions/delete/:username", async (req, res) => {
+  try {
+    const { username } = req.params;
+    const deletedResponses = await UserResponse.deleteMany({ username });
+
+    if (deletedResponses.deletedCount === 0) {
+      return res.status(404).json({ success: false, error: "No responses found for this user" });
+    }
+
+    res.json({ success: true, message: `Deleted ${deletedResponses.deletedCount} responses for ${username}` });
+  } catch (error) {
+    console.error("Error deleting responses:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
+
 // Start Server
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
